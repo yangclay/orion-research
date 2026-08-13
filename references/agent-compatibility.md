@@ -12,7 +12,7 @@ Orion Research 方法论与工具调用分离。以下映射帮助你在不同 A
 | 反爬页面 | `scripts/scrape-stealth.py` | Playwright MCP | 浏览器工具 | Playwright / Scrapling |
 | 整站抓取 | `scripts/crawl_site.py` | crawl4ai | crawl4ai | `crawl4ai` |
 | 语义重排 | Jina Rerank API | Jina Rerank API | Jina Rerank API | Jina / Cohere Rerank |
-| 记忆/经验记录 | `hindsight_retain` | CLAUDE.md 更新 / 记忆文件 | AGENTS.md 更新 | 追加到记忆文件 |
+| 记忆/经验记录 | Hermes 记忆系统 | CLAUDE.md 更新 / 记忆文件 | AGENTS.md 更新 | 追加到记忆文件 |
 | API key 管理 | `.env`（按环境读取） | 环境变量 | 环境变量 | 环境变量（不要硬编码） |
 
 ## 安装方式
@@ -43,7 +43,7 @@ git clone https://github.com/yangclay/orion-research.git \
 ## 各环境注意事项
 
 - **Hermes**：完整支持，含 SaC 模板、限流控制、中文生态专项
-- **Claude Code**：`execute_code` 用 bash 替代；`hindsight_retain` 用更新 CLAUDE.md 替代；其余方法论通用
+- **Claude Code**：`execute_code` 用 bash 替代；记忆记录用更新 CLAUDE.md 替代；其余方法论通用
 - **OpenCode/Cursor**：建议先跑 ReAct 模式（轻量），复杂调研再启用 CodeAct（需要可用的搜索 API key）
 - **通用**：API key 一律从环境变量读取，禁止硬编码进任何文件
 
