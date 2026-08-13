@@ -37,7 +37,28 @@ Orion Research 就是给 AI 装上这套方法论。
 
 ### 安装（任选你的 Agent 环境）
 
-**Anthropic Claude / Claude Code（Agent Skills 标准）**
+**通用：一条命令装到所有主流 Agent（Claude Code / Codex / OpenClaw / Cursor 等）**
+
+```bash
+npx skills add yangclay/orion-research
+```
+
+自动检测你已安装的 Agent 并分发到对应 skills 目录。也可手动安装：
+
+**OpenClaw**
+
+```bash
+openclaw skills install git:yangclay/orion-research@main
+```
+
+**OpenAI Codex**
+
+```bash
+mkdir -p ~/.codex/skills/orion-research
+cp -r SKILL.md references/ scripts/ gotchas/ evals/ ~/.codex/skills/orion-research/
+```
+
+**Anthropic Claude / Claude Code**
 
 ```bash
 mkdir -p ~/.claude/skills/orion-research
@@ -51,7 +72,7 @@ git clone https://github.com/yangclay/orion-research.git \
   ~/.hermes/profiles/<你的profile>/skills/orion-research
 ```
 
-**OpenCode / Cursor 等**：将 `SKILL.md` + `references/` 放入项目的 skill 指令目录（见 [Agent 兼容矩阵](references/agent-compatibility.md)）。
+> 其他 Agent（OpenCode / Cursor / Windsurf / Gemini CLI 等）及 WorkBuddy 特殊适配见 [Agent 兼容矩阵](references/agent-compatibility.md)。
 
 ### 使用
 
