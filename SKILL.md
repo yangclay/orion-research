@@ -10,7 +10,7 @@ description: >
   web search instead — do NOT trigger this skill.
 license: MIT
 metadata:
-  version: 3.4.0
+  version: 3.4.1
 ---
 
 # Orion Research (猎真) — Deep Research Skill
@@ -161,6 +161,8 @@ metadata:
 2. 某引擎对某类子问题**意外有效**
 
 **不记录**：一切正常、按预期工作的调用。
+
+**第三类必记（v3.4.1）——标准误判（evaluator divergence）**：用户对报告的反应与本 skill 判定相反时（skill 给高可信度/判 PASS，用户打回；或低判被用户认可）→ 按 Agent 环境记录 `[场景] 判X被用户判Y，分歧点=Z`。这是评估器调优的原材料——不改当下，攒够 ≥2 次同型分歧才动判据（先验证后固化）。
 
 ## 反模式（不要这样做）
 
