@@ -23,13 +23,14 @@ Orion Research 就是给 AI 装上这套方法论。
 
 同样一句"帮我调研一下 X"，装了 Orion Research 的 AI 会：
 
+0. **先分流，不小题大做**：简单事实直接答（快速通道），复杂问题才启动完整七步（深度通道）
 1. **拆问题**：把大问题拆成几个子问题，逐个击破
 2. **多引擎搜索**：不止搜一遍，而是换多个搜索引擎交叉找
-3. **给来源分级**：每个结论标注可信度 A/B/C/D（A=一手权威来源，D=软文/可疑）
-4. **识别垃圾内容**：自动识别 SEO 农场、拼凑文、营销软文并降权
-5. **检查时效性**：标注信息的时间，过时的会提醒你
+3. **查缺口**：证据不够就定向补搜（最多 3 轮），够就停——不盲目搜满固定轮数
+4. **给来源分级**：每个结论标注可信度 A/B/C/D（A=一手权威来源，D=软文/可疑）
+5. **识别垃圾内容**：自动识别 SEO 农场、拼凑文、营销软文并降权；检查时效性，过时的会提醒
 6. **暴露矛盾**：不同来源冲突时，把冲突明明白白摆出来，而不是悄悄选一个
-7. **每个结论可追溯**：附上真实链接，你点开就能验证
+7. **自证清白**：报告写完后再用确定性规则独立复核一遍——每个结论附真实链接，你点开就能验证
 
 **最终交付的是一份"带证据链的调研报告"**，不是一段可能编造的小作文。
 
@@ -90,22 +91,30 @@ git clone https://github.com/yangclay/orion-research.git \
 
 ```mermaid
 graph TD
-    S1["Step 1 拆解<br/>Decompose"] --> S2["Step 2 SaC 编排<br/>SaC Orchestration"]
-    S2 --> S3["Step 3 差距分析<br/>Gap Analysis"]
-    S3 --> S4["Step 4 验证<br/>Verification"]
+    Q["用户提问<br/>Research Request"] --> G{"Step 0 分流门<br/>Triage Gate"}
+
+    G -- "简单 Simple" --> F["快速通道 · ReAct 直答<br/>Fast Lane: 2-3 searches + verdict"]
+    G -- "复杂 / 猎真 / 影响决策<br/>Complex" --> S1["Step 1 拆解<br/>Decompose"]
+
+    S1 --> S2["Step 2 SaC 编排<br/>SaC Orchestration"]
+    S2 --> S3{"Step 3 差距分析<br/>Gap Analysis"}
+    S3 -- "有缺口 · 补搜 ≤3 轮<br/>Gap found" --> S2
+    S3 -- "证据齐<br/>Evidence ready" --> S4["Step 4 验证<br/>Verification"]
     S4 --> S5["Step 5 报告<br/>Report"]
     S5 --> S6["Step 6 独立验证<br/>Independent Verification"]
     S6 --> S7["Step 7 策略反馈<br/>Strategy Feedback"]
 
-    subgraph PIPE["Step 2 内部 SaC Pipeline"]
-        E1["引擎选择<br/>Engine"] --> E2["Jina 重排<br/>Rerank"]
-        E2 --> E3["规则过滤<br/>Rule Filter"]
-        E3 --> E4["去重<br/>Dedupe"]
-        E4 --> E5["字段提取<br/>parse_field"]
+    subgraph PIPE["Step 2 内部 · SaC Pipeline"]
+        E1["① 引擎选择<br/>Engine"] --> E2["② Jina 重排<br/>Rerank"]
+        E2 --> E3["③ 规则过滤<br/>Rule Filter"]
+        E3 --> E4["④ 去重<br/>Dedupe"]
+        E4 --> E5["⑤ 字段提取<br/>parse_field"]
     end
 
-    S2 -. "展开" .-> PIPE
-    S3 -. "缺口 补搜" .-> S2
+    S2 -. "展开 expand" .-> PIPE
+
+    F --> D["交付：带证据链的结论<br/>Evidence-chained Report"]
+    S7 --> D
 ```
 
 ## 它和普通 AI 搜索的区别
