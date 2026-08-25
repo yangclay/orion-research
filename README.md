@@ -2,7 +2,7 @@
 
 > **让 AI 帮你调研时，给你的不是"答案"，而是"带证据链的结论"。**
 
-[![Version](https://img.shields.io/badge/version-v3.1.0-blue)](https://github.com/yangclay/orion-research)
+[![Version](https://img.shields.io/badge/version-v3.4.0-blue)](https://github.com/yangclay/orion-research)
 [![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)](https://github.com/yangclay/orion-research/blob/master/LICENSE)
 
 ## 这是给谁的

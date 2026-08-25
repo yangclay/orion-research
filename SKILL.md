@@ -2,15 +2,15 @@
 name: orion-research
 description: >
   When the user needs cross-source investigation, sub-question decomposition,
-  conclusion verification, or source conflict handling. Trigger words: 深度调研,
-  调研, 研究, investigate, research.
+  conclusion verification, or source conflict handling. Trigger words: 猎真
+  (unconditional deep-research pass), 深度调研, 调研, 研究, investigate, research.
   Use when model knowledge alone is unreliable, or when source timeliness,
   traceability, cross-validation, and evidence quality materially affect the answer.
   For simple factual queries or single-authoritative-source questions, use plain
   web search instead — do NOT trigger this skill.
 license: MIT
 metadata:
-  version: 3.1.0
+  version: 3.4.0
 ---
 
 # Orion Research (猎真) — Deep Research Skill
@@ -22,6 +22,34 @@ metadata:
 **核心原则**：搜索是可编程的，不是黑盒 API 调用。多源验证、追溯原始来源、标注时效性、处理冲突。
 
 **跨 Agent 兼容**：本 skill 遵循 [Anthropic Agent Skills 标准](https://agentskills.io)（SKILL.md + references/）。方法论与工具调用分离——所有"做什么"是通用的，"用什么工具"按 Agent 环境映射（见 [Agent 兼容矩阵](references/agent-compatibility.md)）。
+
+## Step 0 分流门（skill 加载后第一个动作）
+
+**直通词「猎真」**——消息含此词 → 无条件深度通道（7 步），跳过出口判定与三问，零歧义。
+
+**考古模式（直通词专属子路径）**——直通后若消息+当前任务语境提取不出明确问句（问题在语境里、用户没成形）→ 先造问题再答：
+1. 数据源 = 当前对话上下文（本任务会话内），不跨会话检索历史——历史残影带偏问题树且拖慢响应
+2. 用批判性思维扫语境找张力点（矛盾点、悬而未决的分歧、用户真正的关注点）→ 每个张力点转成一个可检索子问题，共 3±2 个
+3. 剪枝：答案不改变用户任何行动的子问题砍掉
+4. 出口分置信度：线索收敛（多信号指向同一疑问）→ 展示问题树同时直接开跑；线索发散 → 只出问题树等用户拍板，不跑
+5. 收敛：分支答案互证 → 合成主答案；分支冲突 → **冲突即答案**——暴露用户真正纠结的矛盾，对矛盾做 trade-off 分析，进输出契约「矛盾记录」
+
+考古是纯推理步骤，零额外工具调用；产出问题树后无缝接入 7 步的拆解→检索→收敛。
+
+**出口 0：非调研加载**——任务是治理/运维/读文件（skill 合规检查、审计、抓取工具调用）→ 不启用任何流程，仅将 references/scripts 当工具箱，用完即走。多数历史加载属此类，禁止为仪式跑流程。
+
+**快速通道**——三问全过 → 单引擎单查直答，不走 7 步：
+1. 单一子问题（一问可闭环，无需拆解）
+2. 答错后果限于当次对话（不牵动决策/产出）
+3. 无冲突裁决预期（非争议/多方利益话题）
+
+**深度通道**——任一命中 → 完整 7 步：
+- ≥2 个相互依赖的子问题
+- 答案影响决策（选品/定价/架构/对外发布）
+- 预期来源冲突或需可信度分级
+- 用户明说「深度调研/认真查/帮我验证」（或直通词「猎真」）
+
+**升级规则**：快速通道跑完发现来源打架或答案牵动决策 → 立即转深度，已查结果作为子问题输入不浪费。
 
 ## When to Use
 

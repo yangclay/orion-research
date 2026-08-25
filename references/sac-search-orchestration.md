@@ -18,7 +18,7 @@
 
 ## API 限流速查表（2026-08 官方核实）
 
-**所有 API 目前都是免费的，真正约束是速率限制（RPM）和 Hermes 的 20 RPM 总限流。**
+**所有 API 目前都是免费的，真正约束是各 API 的速率限制（RPM）——串行调用即可规避。**
 
 | API | 免费额度 | **速率限制** | 安全间隔 | 用途 |
 |-----|---------|------------|---------|------|
@@ -31,9 +31,8 @@
 | **web_search**（内置 DDG） | 无限免费 | 无公布限流 | 不用管 | 默认兜底 |
 
 **调度铁律：**
-1. **Hermes execute_code 总限流 20 RPM（Agnes）**——所有 API 调用 + 工具调用共享，`time.sleep(3)` 不可省
-2. **同一 API 绝不并发**（Tavily/SerpAPI 单线程串行）
-3. **Jina rerank 一次调研只调 1-2 次**——全部结果合并后一次性重排，不是每个查询重排
+1. **同一 API 绝不并发**（Tavily/SerpAPI 单线程串行），请求间按上表安全间隔 sleep
+2. **Jina rerank 一次调研只调 1-2 次**——全部结果合并后一次性重排，不是每个查询重排
 4. **免费源先上**（web_search/TinyFish/Exa），质量源（Tavily/SerpAPI）按子问题特性按需用
 
 ## 五段式管道（引擎选择是"决策"不是"顺序"）
@@ -124,7 +123,7 @@ queries = [
 raw = []
 for sub, engine, qs in queries:
     for q in qs:
-        time.sleep(3)  # 铁律：Agnes 20 RPM，不可省
+        time.sleep(3)  # 串行限流：同一 API 请求间隔不可省
         try:
             if engine == "web_search":
                 r = web_search(q, limit=5)
@@ -212,7 +211,7 @@ print(json.dumps(top, ensure_ascii=False, indent=1))
 4. **rerank 失败兜底**：Jina 挂了就按原始顺序返回（脚本内 try/except）
 5. **相关性阈值**：0.3 默认，结果太少降到 0.2，太多升到 0.4
 6. **铁律（不可省）**：
-   - `time.sleep(3)` —— Agnes 20 RPM 总限流
+   - `time.sleep(3)` —— 同一 API 串行间隔（按上表安全间隔调整）
    - Jina 必须用 curl + `-d @file`（内联会转义失败）
    - key 必须脚本内读文件（execute_code 环境不自动加载 .env）
    - 同一 API 绝不并发
